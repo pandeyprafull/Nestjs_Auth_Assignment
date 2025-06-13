@@ -173,9 +173,6 @@ Once the application is running, visit:
 # Unit tests
 npm run test
 
-# E2E tests
-npm run test:e2e
-
 # Test coverage
 npm run test:cov
 ```
@@ -191,7 +188,7 @@ npm run format
 
 ## Deployment
 
-### Docker Support
+### Docker Support if you wants to use
 Create a `Dockerfile`:
 
 ```dockerfile
