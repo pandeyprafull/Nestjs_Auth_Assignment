@@ -98,12 +98,19 @@ describe('DocumentsService', () => {
 
     it('should throw NotFoundException if doc not found', async () => {
       repo.findOne.mockResolvedValueOnce(null);
-      await expect(service.findOne('2', 'user1', UserRole.ADMIN)).rejects.toThrow(NotFoundException);
+      await expect(
+        service.findOne('2', 'user1', UserRole.ADMIN),
+      ).rejects.toThrow(NotFoundException);
     });
 
     it('should throw ForbiddenException if not owner and not admin', async () => {
-      repo.findOne.mockResolvedValueOnce({ ...mockDocument, uploadedById: 'otherUser' });
-      await expect(service.findOne('1', 'user1', UserRole.VIEWER)).rejects.toThrow(ForbiddenException);
+      repo.findOne.mockResolvedValueOnce({
+        ...mockDocument,
+        uploadedById: 'otherUser',
+      });
+      await expect(
+        service.findOne('1', 'user1', UserRole.VIEWER),
+      ).rejects.toThrow(ForbiddenException);
     });
   });
 
@@ -116,7 +123,9 @@ describe('DocumentsService', () => {
     });
 
     it('should deny viewer role from updating', async () => {
-      await expect(service.update('1', {}, 'user1', UserRole.VIEWER)).rejects.toThrow(ForbiddenException);
+      await expect(
+        service.update('1', {}, 'user1', UserRole.VIEWER),
+      ).rejects.toThrow(ForbiddenException);
     });
   });
 
@@ -127,28 +136,42 @@ describe('DocumentsService', () => {
     });
 
     it('should deny viewer role from deleting', async () => {
-      await expect(service.remove('1', 'user1', UserRole.VIEWER)).rejects.toThrow(ForbiddenException);
+      await expect(
+        service.remove('1', 'user1', UserRole.VIEWER),
+      ).rejects.toThrow(ForbiddenException);
     });
   });
 
   describe('updateStatus', () => {
     it('should update document status to completed', async () => {
-      repo.findOne.mockResolvedValueOnce({ ...mockDocument, status: DocumentStatus.COMPLETED });
+      repo.findOne.mockResolvedValueOnce({
+        ...mockDocument,
+        status: DocumentStatus.COMPLETED,
+      });
       const result = await service.updateStatus('1', DocumentStatus.COMPLETED);
-      expect(repo.update).toHaveBeenCalledWith('1', { status: DocumentStatus.COMPLETED });
+      expect(repo.update).toHaveBeenCalledWith('1', {
+        status: DocumentStatus.COMPLETED,
+      });
       expect(result.status).toEqual(DocumentStatus.COMPLETED);
     });
 
     it('should update status to failed', async () => {
-      repo.findOne.mockResolvedValueOnce({ ...mockDocument, status: DocumentStatus.FAILED });
+      repo.findOne.mockResolvedValueOnce({
+        ...mockDocument,
+        status: DocumentStatus.FAILED,
+      });
       const result = await service.updateStatus('1', DocumentStatus.FAILED);
-      expect(repo.update).toHaveBeenCalledWith('1', { status: DocumentStatus.FAILED });
+      expect(repo.update).toHaveBeenCalledWith('1', {
+        status: DocumentStatus.FAILED,
+      });
       expect(result.status).toEqual(DocumentStatus.FAILED);
     });
 
     it('should throw NotFoundException if doc not found after update', async () => {
       repo.findOne.mockResolvedValueOnce(null);
-      await expect(service.updateStatus('1', DocumentStatus.PROCESSING)).rejects.toThrow(NotFoundException);
+      await expect(
+        service.updateStatus('1', DocumentStatus.PROCESSING),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 });

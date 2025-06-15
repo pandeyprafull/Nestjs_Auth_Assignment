@@ -11,20 +11,20 @@ describe('UsersService', () => {
 
   const mockUsers: User[] = [
     {
-        id: '1',
-        email: 'user1@example.com',
-        firstName: 'John',
-        lastName: 'Doe',
-        role: 'user',
-        isActive: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        password: '',
+      id: '1',
+      email: 'user1@example.com',
+      firstName: 'John',
+      lastName: 'Doe',
+      role: 'user',
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      password: '',
     } as unknown as User,
   ];
 
   const mockRepository = {
-    create: jest.fn().mockImplementation(dto => dto),
+    create: jest.fn().mockImplementation((dto) => dto),
     save: jest.fn().mockResolvedValue(mockUsers[0]),
     find: jest.fn().mockResolvedValue(mockUsers),
     findOne: jest.fn(),
@@ -68,7 +68,9 @@ describe('UsersService', () => {
     mockRepository.findOne.mockResolvedValue(mockUsers[0]);
     const updated = await service.update('1', { firstName: 'Jane' });
     expect(updated).toEqual(mockUsers[0]);
-    expect(mockRepository.update).toHaveBeenCalledWith('1', { firstName: 'Jane' });
+    expect(mockRepository.update).toHaveBeenCalledWith('1', {
+      firstName: 'Jane',
+    });
   });
 
   it('should remove user', async () => {

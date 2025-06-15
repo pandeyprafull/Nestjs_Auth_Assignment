@@ -10,7 +10,9 @@ describe('AuthController', () => {
 
   beforeEach(async () => {
     authService = {
-      register: jest.fn().mockResolvedValue({ id: 1, email: 'test@example.com' }),
+      register: jest
+        .fn()
+        .mockResolvedValue({ id: 1, email: 'test@example.com' }),
       login: jest.fn().mockResolvedValue({ access_token: 'mock-token' }),
     };
 

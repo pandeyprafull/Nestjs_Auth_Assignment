@@ -91,7 +91,11 @@ describe('DocumentsController', () => {
       mockDocumentsService.findOne.mockResolvedValue(mockDocument);
 
       const result = await controller.findOne('1', mockRequest);
-      expect(service.findOne).toHaveBeenCalledWith('1', 'user1', UserRole.EDITOR);
+      expect(service.findOne).toHaveBeenCalledWith(
+        '1',
+        'user1',
+        UserRole.EDITOR,
+      );
       expect(result).toEqual(mockDocument);
     });
   });
@@ -108,7 +112,12 @@ describe('DocumentsController', () => {
       });
 
       const result = await controller.update('1', dto, mockRequest);
-      expect(service.update).toHaveBeenCalledWith('1', dto, 'user1', UserRole.EDITOR);
+      expect(service.update).toHaveBeenCalledWith(
+        '1',
+        dto,
+        'user1',
+        UserRole.EDITOR,
+      );
       expect(result).toEqual({ ...mockDocument, ...dto });
     });
   });
@@ -118,7 +127,11 @@ describe('DocumentsController', () => {
       mockDocumentsService.remove.mockResolvedValue(undefined);
 
       const result = await controller.remove('1', mockRequest);
-      expect(service.remove).toHaveBeenCalledWith('1', 'user1', UserRole.EDITOR);
+      expect(service.remove).toHaveBeenCalledWith(
+        '1',
+        'user1',
+        UserRole.EDITOR,
+      );
       expect(result).toBeUndefined();
     });
   });

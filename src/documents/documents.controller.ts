@@ -56,7 +56,7 @@ export class DocumentsController {
       }),
     )
     file: Express.Multer.File,
-    @Request() req,
+    @Request() req: { user: { userId: string; role: string } },
   ) {
     return this.documentsService.create(
       createDocumentDto,
@@ -68,14 +68,20 @@ export class DocumentsController {
   @ApiOperation({ summary: 'Get all documents' })
   @ApiResponse({ status: 200, description: 'Returns all documents' })
   @Get()
-  findAll(@Request() req) {
-    return this.documentsService.findAll(req.user.userId, req.user.role);
+  findAll(@Request() req: { user: { userId: string; role: string } }) {
+    return this.documentsService.findAll(
+      req.user.userId,
+      req.user.role as UserRole,
+    );
   }
 
   @ApiOperation({ summary: 'Get document by ID' })
   @ApiResponse({ status: 200, description: 'Returns document by ID' })
   @Get(':id')
-  findOne(@Param('id') id: string, @Request() req) {
+  findOne(
+    @Param('id') id: string,
+    @Request() req: { user: { userId: string; role: UserRole } },
+  ) {
     return this.documentsService.findOne(id, req.user.userId, req.user.role);
   }
 
@@ -86,7 +92,7 @@ export class DocumentsController {
   update(
     @Param('id') id: string,
     @Body() updateDocumentDto: UpdateDocumentDto,
-    @Request() req,
+    @Request() req: { user: { userId: string; role: UserRole } },
   ) {
     return this.documentsService.update(
       id,
@@ -100,7 +106,10 @@ export class DocumentsController {
   @ApiResponse({ status: 200, description: 'Document successfully deleted' })
   @Delete(':id')
   @Roles(UserRole.ADMIN, UserRole.EDITOR)
-  remove(@Param('id') id: string, @Request() req) {
+  remove(
+    @Param('id') id: string,
+    @Request() req: { user: { userId: string; role: UserRole } },
+  ) {
     return this.documentsService.remove(id, req.user.userId, req.user.role);
   }
 }
