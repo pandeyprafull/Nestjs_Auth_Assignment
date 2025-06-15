@@ -25,7 +25,10 @@ describe('IngestionService', () => {
   };
 
   const mockRepository = {
-    create: jest.fn().mockImplementation((dto: CreateIngestionJobDto) => ({ ...mockJob, ...dto })),
+    create: jest.fn().mockImplementation((dto: CreateIngestionJobDto) => ({
+      ...mockJob,
+      ...dto,
+    })),
     save: jest.fn().mockResolvedValue(mockJob),
     find: jest.fn().mockResolvedValue([mockJob]),
     findOne: jest.fn().mockResolvedValue(mockJob),
@@ -34,7 +37,9 @@ describe('IngestionService', () => {
   };
 
   const mockDocumentsService = {
-    updateStatus: jest.fn().mockResolvedValue({ id: 'doc-1', status: DocumentStatus.COMPLETED }),
+    updateStatus: jest
+      .fn()
+      .mockResolvedValue({ id: 'doc-1', status: DocumentStatus.COMPLETED }),
   };
 
   beforeEach(async () => {
@@ -47,12 +52,17 @@ describe('IngestionService', () => {
     }).compile();
 
     service = module.get<IngestionService>(IngestionService);
-    repo = module.get<Repository<IngestionJob>>(getRepositoryToken(IngestionJob));
+    repo = module.get<Repository<IngestionJob>>(
+      getRepositoryToken(IngestionJob),
+    );
     documentsService = module.get<DocumentsService>(DocumentsService);
   });
 
   it('should create and process ingestion job', async () => {
-    const dto: CreateIngestionJobDto = { documentId: 'doc-1', metadata: { user: 'test' } };
+    const dto: CreateIngestionJobDto = {
+      documentId: 'doc-1',
+      metadata: { user: 'test' },
+    };
     const job = await service.create(dto);
     expect(job.documentId).toEqual(dto.documentId);
     expect(repo.create).toHaveBeenCalledWith(dto);
@@ -61,28 +71,46 @@ describe('IngestionService', () => {
 
   it('should throw NotFoundException on invalid job ID in findOne', async () => {
     jest.spyOn(repo, 'findOne').mockResolvedValueOnce(null);
-    await expect(service.findOne('invalid-id')).rejects.toThrow(NotFoundException);
+    await expect(service.findOne('invalid-id')).rejects.toThrow(
+      NotFoundException,
+    );
   });
 
   it('should update status and retrieve updated job', async () => {
-    const updatedJob = await service.updateStatus('job-1', IngestionStatus.RUNNING, 50);
-    expect(repo.update).toHaveBeenCalledWith('job-1', { status: IngestionStatus.RUNNING, progress: 50, errorMessage: undefined });
+    const updatedJob = await service.updateStatus(
+      'job-1',
+      IngestionStatus.RUNNING,
+      50,
+    );
+    expect(repo.update).toHaveBeenCalledWith('job-1', {
+      status: IngestionStatus.RUNNING,
+      progress: 50,
+      errorMessage: undefined,
+    });
     expect(updatedJob).toEqual(mockJob);
   });
 
   it('should trigger ingestion and update document status', async () => {
     const job = await service.triggerIngestion('doc-1');
-    expect(documentsService.updateStatus).toHaveBeenCalledWith('doc-1', DocumentStatus.PROCESSING);
+    expect(documentsService.updateStatus).toHaveBeenCalledWith(
+      'doc-1',
+      DocumentStatus.PROCESSING,
+    );
     expect(job.documentId).toEqual('doc-1');
   }, 15000);
 
   it('should cancel a running job', async () => {
-    jest.spyOn(service, 'findOne').mockResolvedValueOnce({ ...mockJob, status: IngestionStatus.RUNNING });
+    jest
+      .spyOn(service, 'findOne')
+      .mockResolvedValueOnce({ ...mockJob, status: IngestionStatus.RUNNING });
     const result = await service.cancelJob('job-1');
     expect(result).toEqual(mockJob);
     expect(repo.update).toHaveBeenCalledWith(
       'job-1',
-      expect.objectContaining({ status: IngestionStatus.FAILED, errorMessage: 'Job cancelled by user' })
+      expect.objectContaining({
+        status: IngestionStatus.FAILED,
+        errorMessage: 'Job cancelled by user',
+      }),
     );
   });
 

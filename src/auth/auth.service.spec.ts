@@ -25,14 +25,23 @@ describe('AuthService', () => {
 
     usersService = {
       findByEmail: jest.fn().mockResolvedValue(mockUser),
-      create: jest.fn().mockImplementation((dto) => ({
-        ...dto,
-        id: 1,
-        firstName: dto.firstName,
-        lastName: dto.lastName,
-        email: dto.email,
-        role: 'user',
-      })),
+      create: jest
+        .fn()
+        .mockImplementation(
+          (dto: {
+            firstName: string;
+            lastName: string;
+            email: string;
+            password: string;
+          }) => ({
+            ...dto,
+            id: 1,
+            firstName: dto.firstName,
+            lastName: dto.lastName,
+            email: dto.email,
+            role: 'user',
+          }),
+        ),
     };
 
     jwtService = {
@@ -47,19 +56,28 @@ describe('AuthService', () => {
 
   describe('validateUser', () => {
     it('should return user without password if valid credentials', async () => {
-      const result = await authService.validateUser('test@example.com', 'password123');
+      const result = await authService.validateUser(
+        'test@example.com',
+        'password123',
+      );
       expect(result).toHaveProperty('email', 'test@example.com');
       expect(result).not.toHaveProperty('password');
     });
 
     it('should return null if invalid password', async () => {
-      const result = await authService.validateUser('test@example.com', 'wrongpass');
+      const result = await authService.validateUser(
+        'test@example.com',
+        'wrongpass',
+      );
       expect(result).toBeNull();
     });
 
     it('should return null if user not found', async () => {
       (usersService.findByEmail as jest.Mock).mockResolvedValue(null);
-      const result = await authService.validateUser('notfound@example.com', 'password');
+      const result = await authService.validateUser(
+        'notfound@example.com',
+        'password',
+      );
       expect(result).toBeNull();
     });
   });

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
@@ -28,6 +29,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Logout user' })
   @UseGuards(JwtAuthGuard)
   @Post('logout')
+  // eslint-disable-next-line @typescript-eslint/require-await
   async logout(@Request() req) {
     // In a real application, we might want to blacklist the token from client side
     return { message: 'Successfully logged out' };
